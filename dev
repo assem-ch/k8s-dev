@@ -72,15 +72,16 @@ cmd_x(){
 # Wait for app (read: pod) to be available
 cmd_wait(){
     app=$(get_app_name)
-    echo "waiting for the $(get_app_name) app to be available"
+    echo "waiting for the $app app to be available"
     status=""
     while [ "x$status" != "xRunning" ]
     do
+        echo "$(kubectl logs -l app=$app)"
         status=$(kubectl get po -l app=$app -o yaml | yq r - items[0].status.phase)
-        echo "$(get_app_name) status  is $(status).."
+        echo "$app status  is $status.."
         sleep 1
     done
-    echo "$(get_app_name) is up and ready..."
+    echo "$app is up and ready..."
 }
 cmd_w(){
     cmd_wait
@@ -115,7 +116,7 @@ cmd_test(){
     fi
 
     app=$(get_app_name)
-    echo "running tests for $(app)"
+    echo "running tests for $app"
     cmd_exec -- $test_command $@
 }
 cmd_t(){
