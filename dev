@@ -30,6 +30,7 @@ cmd_up(){
 
 # Boot the app through skaffold in background.
 cmd_run(){
+    echo "running $@"
     skaffold run $@
 }
 cmd_r(){
@@ -71,13 +72,15 @@ cmd_x(){
 # Wait for app (read: pod) to be available
 cmd_wait(){
     app=$(get_app_name)
+    echo "waiting for the $(get_app_name) app to be available"
     status=""
-
     while [ "x$status" != "xRunning" ]
     do
         status=$(kubectl get po -l app=$app -o yaml | yq r - items[0].status.phase)
+        echo "$(get_app_name) status  is $(status).."
         sleep 1
     done
+    echo "$(get_app_name) is up and ready..."
 }
 cmd_w(){
     cmd_wait
@@ -112,6 +115,7 @@ cmd_test(){
     fi
 
     app=$(get_app_name)
+    echo "running tests for $(app)"
     cmd_exec -- $test_command $@
 }
 cmd_t(){
